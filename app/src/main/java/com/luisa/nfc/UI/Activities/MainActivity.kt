@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() , DialogListener{
     private lateinit var mBtWrite: Button
     private lateinit var mBtRead: Button
     private  var mNfcWriteFragment: NFCWriteFragment? = null
-    private   var mNfcReadFragment: NFCReadFragment? = null
+    private    var mNfcReadFragment: NFCReadFragment? = null
 
 
     private var isDialogDisplayed = false
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() , DialogListener{
     }
 
     private fun showReadFragment() {
-        mNfcReadFragment =(NFCReadFragment.TAG) as? NFCReadFragment
+        mNfcReadFragment = fragmentManager.findFragmentByTag(NFCReadFragment.TAG) as? NFCReadFragment
 
         if (mNfcReadFragment == null) {
             mNfcReadFragment = NFCReadFragment.newInstance()
@@ -78,14 +78,10 @@ class MainActivity : AppCompatActivity() , DialogListener{
         val techDetected = IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
         val nfcIntentFilter = arrayOf(techDetected, tagDetected, ndefDetected)
          val pendingIntent = PendingIntent.getActivity(
-             this, 0, Intent().addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+             this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
          )
-         if (mNfcAdapter != null) mNfcAdapter.enableForegroundDispatch(
-             this,
-             pendingIntent,
-             nfcIntentFilter,
-             null
-         )
+         if (mNfcAdapter != null)
+             mNfcAdapter.enableForegroundDispatch(this, pendingIntent, nfcIntentFilter, null)
 
 
      }
@@ -130,7 +126,8 @@ class MainActivity : AppCompatActivity() , DialogListener{
                         fragmentManager.findFragmentByTag(NFCWriteFragment.TAG) as NFCWriteFragment
                     mNfcWriteFragment!!.onNfcDetected(ndef, messageToWrite)
                 } else {
-                    mNfcReadFragment =(NFCReadFragment.TAG) as NFCReadFragment
+
+                    mNfcReadFragment = fragmentManager.findFragmentByTag(NFCReadFragment.TAG) as? NFCReadFragment
                     mNfcReadFragment!!.onNfcDetected(ndef)
                 }
             }
